@@ -23,6 +23,9 @@ $ProgramInfoFolder = Join-Path -Path $PSScriptRoot -ChildPath "Scripts"
 # Set the path to the log file
 $LogFilePath = Join-Path -Path $PSScriptRoot -ChildPath "installation.log"
 
+# Set the path to the icon file
+$IconPath = Join-Path -Path $PSScriptRoot -ChildPath "icon.ico"
+
 # ==============================
 # Functions
 # ==============================
@@ -238,12 +241,14 @@ function OnCancelClick {
     $window.Close()
 }
 
+Add-Type -AssemblyName PresentationFramework, PresentationCore
+
 # XAML definition without Click attributes
 $xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="myTech.Today Installer" Height="500" Width="700" WindowStartupLocation="CenterScreen"
-        Background="#2D2D30" Foreground="White" FontFamily="Segoe UI" Icon="icon.ico">
+        Background="#245261" Foreground="White" FontFamily="Segoe UI" Icon="$IconPath">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -252,7 +257,7 @@ $xaml = @"
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Select Programs to Install:" FontSize="16" Margin="0,0,0,10"/>
-        <ListView x:Name="ProgramList" Grid.Row="1" SelectionMode="Extended">
+        <ListView x:Name="ProgramList" Grid.Row="1" SelectionMode="Extended" Background="#181818" Foreground="#dddddd" FontFamily="Segoe UI" >
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Program" DisplayMemberBinding="{Binding Name}" Width="300"/>
