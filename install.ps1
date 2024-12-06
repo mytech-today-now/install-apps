@@ -243,7 +243,7 @@ $xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Installation Framework" Height="500" Width="700" WindowStartupLocation="CenterScreen"
-        Background="#2D2D30" Foreground="White" FontFamily="Segoe UI">
+        Background="#2D2D30" Foreground="White" FontFamily="Segoe UI" Icon="icon.ico">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
