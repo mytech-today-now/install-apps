@@ -1,4 +1,4 @@
-# MainScript.ps1
+# install.ps1
 <#
 .SYNOPSIS
     Main installation framework script that installs programs based on available installation scripts.
@@ -9,8 +9,8 @@
     presents a GUI for user selection, and installs the selected programs sequentially while tracking progress.
 
 .NOTES
-    Author: Your Name
-    Date:   YYYY-MM-DD
+    Author: @mytech-today-now
+    Date:   2024-12-06
 #>
 
 # ==============================
@@ -70,7 +70,7 @@ function Is-ProgramInstalledViaRegistry {
 # Main Script Execution - Script Verification
 # ==============================
 
-Log-Message "Starting MainScript.ps1" "INFO"
+Log-Message "Starting install.ps1" "INFO"
 
 # Check if the Program Information Folder exists
 if (-not (Test-Path -Path $ProgramInfoFolder)) {
@@ -313,4 +313,4 @@ $programList.AddHandler([System.Windows.Controls.Primitives.ButtonBase]::ClickEv
 Log-Message "Displaying the GUI" "INFO"
 $null = $window.ShowDialog()
 
-Log-Message "MainScript.ps1 completed" "INFO"
+Log-Message "install.ps1 completed" "INFO"
