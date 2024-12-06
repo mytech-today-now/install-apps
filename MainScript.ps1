@@ -1,4 +1,4 @@
-# install.ps1
+# MainScript.ps1
 <#
 .SYNOPSIS
     Main installation framework script that installs programs based on available installation scripts.
@@ -70,7 +70,7 @@ function Is-ProgramInstalledViaRegistry {
 # Main Script Execution - Script Verification
 # ==============================
 
-Log-Message "Starting install.ps1" "INFO"
+Log-Message "Starting MainScript.ps1" "INFO"
 
 # Check if the Program Information Folder exists
 if (-not (Test-Path -Path $ProgramInfoFolder)) {
@@ -242,7 +242,7 @@ function OnCancelClick {
 $xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Installation Framework" Height="500" Width="700" WindowStartupLocation="CenterScreen"
+        Title="myTech.Today Installer" Height="500" Width="700" WindowStartupLocation="CenterScreen"
         Background="#2D2D30" Foreground="White" FontFamily="Segoe UI" Icon="icon.ico">
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -313,4 +313,4 @@ $programList.AddHandler([System.Windows.Controls.Primitives.ButtonBase]::ClickEv
 Log-Message "Displaying the GUI" "INFO"
 $null = $window.ShowDialog()
 
-Log-Message "install.ps1 completed" "INFO"
+Log-Message "MainScript.ps1 completed" "INFO"
