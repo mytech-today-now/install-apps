@@ -1,30 +1,27 @@
 # Chrome.ps1
 
-# ==============================
-# Program Information
-# ==============================
-
 $ProgramName = "Google Chrome"
 $ProgramExecutablePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-
-# Chrome download page
 $DownloadsPageURL = "https://www.google.com/chrome/"
-
-# Temporary directory for downloads
 $TempDir = "$env:TEMP\ChromeInstaller"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 
-# ==============================
-# Function to Check Installation
-# ==============================
+function Write-Log {
+    param (
+        [string]$Message,
+        [ValidateSet("INFO", "WARN", "ERROR")] [string]$Level = "INFO"
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "$timestamp [$Level] $Message"
+    Write-Output $logEntry
+    Add-Content -Path $LogFilePath -Value $logEntry
+}
 
 function IsInstalled {
     return Test-Path $ProgramExecutablePath
 }
-
-# ==============================
-# Function to Install the Program
-# ==============================
 
 function Install-Program {
     Write-Log "Starting installation of $ProgramName"
@@ -34,7 +31,6 @@ function Install-Program {
 
         $htmlContent = Invoke-WebRequest -Uri $DownloadsPageURL -UseBasicParsing
 
-        # Look for a ChromeSetup.exe link
         $installerLink = ($htmlContent.Links | Where-Object {
             $_.href -match "ChromeSetup\.exe$"
         }).href | Select-Object -First 1
@@ -44,7 +40,6 @@ function Install-Program {
             throw "Installer link not found."
         }
 
-        # Construct full URL if necessary
         if ($installerLink -notmatch "^https?://") {
             $uri = [System.Uri]$DownloadsPageURL
             $installerURL = [System.Uri]::new($uri, $installerLink).AbsoluteUri
@@ -63,7 +58,6 @@ function Install-Program {
             throw "Installer download failed."
         }
 
-        # Silent installation
         Write-Log "Starting silent installation"
         $installProcess = Start-Process -FilePath $installerPath -ArgumentList "/silent", "/install" -Wait -PassThru
 
@@ -80,4 +74,10 @@ function Install-Program {
         Write-Log "Cleaning up temporary files"
         Remove-Item -Path $TempDir -Recurse -Force -ErrorAction SilentlyContinue
     }
+}
+
+if (-not (IsInstalled)) {
+    Install-Program
+} else {
+    Write-Log "$ProgramName is already installed." "INFO"
 }

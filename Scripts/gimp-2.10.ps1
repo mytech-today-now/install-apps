@@ -1,57 +1,43 @@
 # Gimp.ps1
 
-# ==============================
-# Program Information
-# ==============================
-
-# Display name of the program
 $ProgramName = "GIMP-2_is1"
-
-# Path to the program's executable after installation
 $ProgramExecutablePath = "C:\Program Files\GIMP 2\bin\gimp-2.10.exe"
-
-# URL of the GIMP downloads page
 $DownloadsPageURL = "https://www.gimp.org/downloads/"
-
-# Temporary directory for downloads
 $TempDir = "$env:TEMP\GIMPInstaller"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 
-# ==============================
-# Function to Check Installation
-# ==============================
+function Write-Log {
+    param (
+        [string]$Message,
+        [ValidateSet("INFO", "WARN", "ERROR")] [string]$Level = "INFO"
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "$timestamp [$Level] $Message"
+    Write-Output $logEntry
+    Add-Content -Path $LogFilePath -Value $logEntry
+}
 
 function IsInstalled {
-    # Check if the GIMP executable exists
     return Test-Path $ProgramExecutablePath
 }
 
-# ==============================
-# Function to Install the Program
-# ==============================
-
 function Install-Program {
-    Write-Log "Starting installation of $ProgramName"
-
-    # Download the latest GIMP installer
+    Write-Log "Starting installation of $ProgramName" "INFO"
     try {
-        Write-Log "Retrieving the latest download link from $DownloadsPageURL"
-
-        # Get the HTML content of the downloads page
+        Write-Log "Retrieving the latest download link from $DownloadsPageURL" "INFO"
         $htmlContent = Invoke-WebRequest -Uri $DownloadsPageURL -UseBasicParsing
 
-        # Parse the HTML to find the Windows installer link
-        # Look for the link matching the GIMP Windows installer pattern
         $installerLink = ($htmlContent.Links | Where-Object {
             $_.href -match "/gimp/v[\d\.]+/windows/gimp-[\d\.]+-setup\.exe$"
         }).href | Select-Object -First 1
 
         if (-not $installerLink) {
-            Write-Log "Error: Unable to find the latest installer link."
+            Write-Log "Error: Unable to find the latest installer link." "ERROR"
             throw "Installer link not found."
         }
 
-        # Construct the full URL if necessary
         if ($installerLink -notmatch "^https?://") {
             $uri = New-Object System.Uri($DownloadsPageURL)
             $installerURL = [System.Uri]::new($uri, $installerLink).AbsoluteUri
@@ -59,40 +45,36 @@ function Install-Program {
             $installerURL = $installerLink
         }
 
-        Write-Log "Latest installer URL: $installerURL"
-
-        # Download the installer
+        Write-Log "Latest installer URL: $installerURL" "INFO"
         $installerPath = Join-Path -Path $TempDir -ChildPath "gimp_latest_installer.exe"
-        Write-Log "Downloading installer to $installerPath"
+        Write-Log "Downloading installer to $installerPath" "INFO"
         Invoke-WebRequest -Uri $installerURL -OutFile $installerPath
 
-        # Verify that the installer was downloaded
         if (-not (Test-Path $installerPath)) {
-            Write-Log "Error: Installer download failed."
+            Write-Log "Error: Installer download failed." "ERROR"
             throw "Installer download failed."
         }
 
-        # Perform a silent installation
-        Write-Log "Starting silent installation"
+        Write-Log "Starting silent installation" "INFO"
         $installProcess = Start-Process -FilePath $installerPath -ArgumentList "/VERYSILENT", "/NORESTART" -Wait -PassThru
 
         if ($installProcess.ExitCode -ne 0) {
-            Write-Log "Error: Installation failed with exit code $($installProcess.ExitCode)."
+            Write-Log "Error: Installation failed with exit code $($installProcess.ExitCode)." "ERROR"
             throw "Installation failed."
         }
 
-        Write-Log "$ProgramName installation completed successfully"
-
+        Write-Log "$ProgramName installation completed successfully" "INFO"
     } catch {
-        Write-Log "Error during installation: $_"
+        Write-Log "Error during installation: $_" "ERROR"
         throw $_
     } finally {
-        # Clean up the temporary files
-        Write-Log "Cleaning up temporary files"
+        Write-Log "Cleaning up temporary files" "INFO"
         Remove-Item -Path $TempDir -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
 
-# ==============================
-# End of Script
-# ==============================
+if (-not (IsInstalled)) {
+    Install-Program
+} else {
+    Write-Log "$ProgramName is already installed." "INFO"
+}

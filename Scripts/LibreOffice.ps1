@@ -1,54 +1,41 @@
-# LibreOffice.ps1
+# LibreCAD.ps1
 
-# ==============================
-# Program Information
-# ==============================
+$ProgramName = "LibreCAD"
+$ProgramExecutablePath = "C:\Program Files\LibreCAD\LibreCAD.exe"
+$DownloadsPageURL = "https://librecad.org/#download"
+$TempDir = "$env:TEMP\LibreCADInstaller"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
 
-$ProgramName = "LibreOffice"
-$ProgramExecutablePath = "C:\Program Files\LibreOffice\program\soffice.exe"
-
-# LibreOffice download page
-$DownloadsPageURL = "https://www.libreoffice.org/download/download-libreoffice/"
-
-# Temporary directory for downloads
-$TempDir = "$env:TEMP\LibreOfficeInstaller"
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 
-# ==============================
-# Function to Check Installation
-# ==============================
+function Write-Log {
+    param (
+        [string]$Message,
+        [ValidateSet("INFO", "WARN", "ERROR")] [string]$Level = "INFO"
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "$timestamp [$Level] $Message"
+    Write-Output $logEntry
+    Add-Content -Path $LogFilePath -Value $logEntry
+}
 
 function IsInstalled {
-    # Check if the LibreOffice executable exists
     return Test-Path $ProgramExecutablePath
 }
 
-# ==============================
-# Function to Install the Program
-# ==============================
-
 function Install-Program {
-    Write-Log "Starting installation of $ProgramName"
-
+    Write-Log "Starting installation of $ProgramName" "INFO"
     try {
-        Write-Log "Retrieving the latest download link from $DownloadsPageURL"
-        
-        # Get the HTML content of the downloads page
+        Write-Log "Retrieving the latest download link from $DownloadsPageURL" "INFO"
         $htmlContent = Invoke-WebRequest -Uri $DownloadsPageURL -UseBasicParsing
-        
-        # Parse the HTML to find the latest Windows x64 MSI installer link.
-        # Typical pattern: LibreOffice_7.6.2_Win_x64.msi
-        # We'll match something like: LibreOffice_..._Win_x64.msi
-        $installerLink = ($htmlContent.Links | Where-Object {
-            $_.href -match "LibreOffice_.*_Win_x64\.msi$"
-        }).href | Select-Object -First 1
+
+        $installerLink = ($htmlContent.Links | Where-Object { $_.href -match "LibreCAD-.*-installer\.exe$" }).href | Select-Object -First 1
 
         if (-not $installerLink) {
-            Write-Log "Error: Unable to find the latest LibreOffice MSI installer link."
+            Write-Log "Error: Unable to find the LibreCAD installer link." "ERROR"
             throw "Installer link not found."
         }
 
-        # Construct the full URL if it's relative
         if ($installerLink -notmatch "^https?://") {
             $uri = [System.Uri]$DownloadsPageURL
             $installerURL = [System.Uri]::new($uri, $installerLink).AbsoluteUri
@@ -56,40 +43,36 @@ function Install-Program {
             $installerURL = $installerLink
         }
 
-        Write-Log "Latest installer URL: $installerURL"
-
-        # Download the installer
-        $installerPath = Join-Path -Path $TempDir -ChildPath "libreoffice_latest_installer.msi"
-        Write-Log "Downloading installer to $installerPath"
+        Write-Log "Latest installer URL: $installerURL" "INFO"
+        $installerPath = Join-Path $TempDir "librecad_installer.exe"
+        Write-Log "Downloading installer to $installerPath" "INFO"
         Invoke-WebRequest -Uri $installerURL -OutFile $installerPath
 
-        # Verify that the installer was downloaded
         if (-not (Test-Path $installerPath)) {
-            Write-Log "Error: Installer download failed."
+            Write-Log "Error: Installer download failed." "ERROR"
             throw "Installer download failed."
         }
 
-        # Perform a silent installation using msiexec
-        Write-Log "Starting silent installation via msiexec"
-        $installProcess = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i `"$installerPath`" /qn /norestart" -Wait -PassThru
+        Write-Log "Starting silent installation" "INFO"
+        $installProcess = Start-Process -FilePath $installerPath -ArgumentList "/verysilent", "/norestart" -Wait -PassThru
 
         if ($installProcess.ExitCode -ne 0) {
-            Write-Log "Error: Installation failed with exit code $($installProcess.ExitCode)."
+            Write-Log "Error: Installation failed with exit code $($installProcess.ExitCode)." "ERROR"
             throw "Installation failed."
         }
 
-        Write-Log "$ProgramName installation completed successfully."
-
+        Write-Log "$ProgramName installation completed successfully." "INFO"
     } catch {
-        Write-Log "Error during installation: $_"
+        Write-Log "Error during installation: $_" "ERROR"
         throw $_
     } finally {
-        # Clean up the temporary files
-        Write-Log "Cleaning up temporary files"
-        Remove-Item -Path $TempDir -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Log "Cleaning up temporary files" "INFO"
+        Remove-Item $TempDir -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
 
-# ==============================
-# End of Script
-# ==============================
+if (-not (IsInstalled)) {
+    Install-Program
+} else {
+    Write-Log "$ProgramName is already installed." "INFO"
+}

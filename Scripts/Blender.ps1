@@ -1,17 +1,9 @@
 # Blender.ps1
 
-# ==============================
-# Program Information
-# ==============================
-
 $ProgramName = "Blender"
-# Define the base path where Blender is installed
 $BasePath = "C:\Program Files\Blender Foundation"
-
-# Get all directories under the base path
 $SubDirs = Get-ChildItem -Path $BasePath -Directory
 
-# Iterate through each directory to find "blender.exe"
 foreach ($Dir in $SubDirs) {
     $ExePath = Join-Path $Dir.FullName "blender.exe"
     if (Test-Path $ExePath) {
@@ -20,54 +12,48 @@ foreach ($Dir in $SubDirs) {
     }
 }
 
-# If no executable is found, $ProgramExecutablePath will remain unset
 if (-not $ProgramExecutablePath) {
     Write-Host "No Blender executable found in $BasePath"
 } else {
     Write-Host "Blender executable found at: $ProgramExecutablePath"
 }
 
-# The Blender downloads page
 $DownloadsPageURL = "https://www.blender.org/download/"
-
-# Temporary directory for downloads
 $TempDir = "$env:TEMP\BlenderInstaller"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 
-# ==============================
-# Function to Check Installation
-# ==============================
+function Write-Log {
+    param (
+        [string]$Message,
+        [ValidateSet("INFO", "WARN", "ERROR")] [string]$Level = "INFO"
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "$timestamp [$Level] $Message"
+    Write-Output $logEntry
+    Add-Content -Path $LogFilePath -Value $logEntry
+}
 
 function IsInstalled {
-    # Check if the Blender executable exists
     return Test-Path $ProgramExecutablePath
 }
 
-# ==============================
-# Function to Install the Program
-# ==============================
-
 function Install-Program {
-    Write-Log "Starting installation of $ProgramName"
-
+    Write-Log "Starting installation of $ProgramName" "INFO"
     try {
-        Write-Log "Retrieving the latest download link from $DownloadsPageURL"
-        
-        # Get the HTML content of the downloads page
+        Write-Log "Retrieving the latest download link from $DownloadsPageURL" "INFO"
         $htmlContent = Invoke-WebRequest -Uri $DownloadsPageURL -UseBasicParsing
 
-        # Parse the HTML to find a Windows MSI installer link
-        # We'll look for something matching 'blender-...-windows-x64.msi'
         $installerLink = ($htmlContent.Links | Where-Object {
             $_.href -match "blender-.*windows.*x64.*\.msi$"
         }).href | Select-Object -First 1
 
         if (-not $installerLink) {
-            Write-Log "Error: Unable to find the latest Blender MSI installer link."
+            Write-Log "Error: Unable to find the latest Blender MSI installer link." "ERROR"
             throw "Installer link not found."
         }
 
-        # Construct the full URL if it's relative
         if ($installerLink -notmatch "^https?://") {
             $uri = [System.Uri]$DownloadsPageURL
             $installerURL = [System.Uri]::new($uri, $installerLink).AbsoluteUri
@@ -75,40 +61,36 @@ function Install-Program {
             $installerURL = $installerLink
         }
 
-        Write-Log "Latest installer URL: $installerURL"
-
-        # Download the installer
+        Write-Log "Latest installer URL: $installerURL" "INFO"
         $installerPath = Join-Path -Path $TempDir -ChildPath "blender_latest_installer.msi"
-        Write-Log "Downloading installer to $installerPath"
+        Write-Log "Downloading installer to $installerPath" "INFO"
         Invoke-WebRequest -Uri $installerURL -OutFile $installerPath
 
-        # Verify that the installer was downloaded
         if (-not (Test-Path $installerPath)) {
-            Write-Log "Error: Installer download failed."
+            Write-Log "Error: Installer download failed." "ERROR"
             throw "Installer download failed."
         }
 
-        # Perform a silent installation using msiexec
-        Write-Log "Starting silent installation via msiexec"
+        Write-Log "Starting silent installation via msiexec" "INFO"
         $installProcess = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i `"$installerPath`" /qn /norestart" -Wait -PassThru
 
         if ($installProcess.ExitCode -ne 0) {
-            Write-Log "Error: Installation failed with exit code $($installProcess.ExitCode)."
+            Write-Log "Error: Installation failed with exit code $($installProcess.ExitCode)." "ERROR"
             throw "Installation failed."
         }
 
-        Write-Log "$ProgramName installation completed successfully."
-
+        Write-Log "$ProgramName installation completed successfully." "INFO"
     } catch {
-        Write-Log "Error during installation: $_"
+        Write-Log "Error during installation: $_" "ERROR"
         throw $_
     } finally {
-        # Clean up the temporary files
-        Write-Log "Cleaning up temporary files"
+        Write-Log "Cleaning up temporary files" "INFO"
         Remove-Item -Path $TempDir -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
 
-# ==============================
-# End of Script
-# ==============================
+if (-not (IsInstalled)) {
+    Install-Program
+} else {
+    Write-Log "$ProgramName is already installed." "INFO"
+}

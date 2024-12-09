@@ -2,10 +2,22 @@
 
 $ProgramName = "TreeSize Free"
 $ProgramExecutablePath = "C:\Program Files\JAM Software\TreeSize Free\TreeSizeFree.exe"
-
 $DownloadsPageURL = "https://www.majorgeeks.com/files/details/treesize_free.html"
 $TempDir = "$env:TEMP\TreeSizeFreeInstaller"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
+
+function Write-Log {
+    param (
+        [string]$Message,
+        [ValidateSet("INFO", "WARN", "ERROR")] [string]$Level = "INFO"
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "$timestamp [$Level] $Message"
+    Write-Output $logEntry
+    Add-Content -Path $LogFilePath -Value $logEntry
+}
 
 function IsInstalled {
     return Test-Path $ProgramExecutablePath
@@ -58,4 +70,10 @@ function Install-Program {
         Write-Log "Cleaning up temporary files"
         Remove-Item $TempDir -Recurse -Force -ErrorAction SilentlyContinue
     }
+}
+
+if (-not (IsInstalled)) {
+    Install-Program
+} else {
+    Write-Log "$ProgramName is already installed." "INFO"
 }

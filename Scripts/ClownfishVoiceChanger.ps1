@@ -4,7 +4,20 @@ $ProgramName = "Clownfish Voice Changer"
 $ProgramExecutablePath = "C:\Program Files (x86)\ClownfishVoiceChanger\ClownfishVoiceChanger.exe"
 $DownloadsPageURL = "https://clownfish-translator.com/voicechanger/download.html"
 $TempDir = "$env:TEMP\ClownfishInstaller"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
+
+function Write-Log {
+    param (
+        [string]$Message,
+        [ValidateSet("INFO", "WARN", "ERROR")] [string]$Level = "INFO"
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "$timestamp [$Level] $Message"
+    Write-Output $logEntry
+    Add-Content -Path $LogFilePath -Value $logEntry
+}
 
 function IsInstalled {
     Test-Path $ProgramExecutablePath
@@ -14,7 +27,6 @@ function Install-Program {
     Write-Log "Installing $ProgramName"
     try {
         $html = Invoke-WebRequest -Uri $DownloadsPageURL -UseBasicParsing
-        # ClownfishVoiceChanger.*.exe
         $installerLink = ($html.Links | Where-Object { $_.href -match "ClownfishVoiceChanger.*\.exe$" }).href | Select-Object -First 1
         if (-not $installerLink) { throw "No installer found." }
 
@@ -28,7 +40,6 @@ function Install-Program {
         Invoke-WebRequest -Uri $installerURL -OutFile $installerPath
 
         Write-Log "Silent installation"
-        # NSIS /S
         $installProcess = Start-Process -FilePath $installerPath -ArgumentList "/S" -Wait -PassThru
         if ($installProcess.ExitCode -ne 0) { throw "Failed." }
 
@@ -39,4 +50,10 @@ function Install-Program {
     } finally {
         Remove-Item $TempDir -Recurse -Force
     }
+}
+
+if (-not (IsInstalled)) {
+    Install-Program
+} else {
+    Write-Log "$ProgramName is already installed." "INFO"
 }

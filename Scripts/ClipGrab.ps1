@@ -2,10 +2,22 @@
 
 $ProgramName = "ClipGrab"
 $ProgramExecutablePath = "C:\Program Files\ClipGrab\ClipGrab.exe"
-
 $DownloadsPageURL = "https://clipgrab.org/"
 $TempDir = "$env:TEMP\ClipGrabInstaller"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
+
+function Write-Log {
+    param (
+        [string]$Message,
+        [ValidateSet("INFO", "WARN", "ERROR")] [string]$Level = "INFO"
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "$timestamp [$Level] $Message"
+    Write-Output $logEntry
+    Add-Content -Path $LogFilePath -Value $logEntry
+}
 
 function IsInstalled {
     return Test-Path $ProgramExecutablePath
@@ -17,7 +29,6 @@ function Install-Program {
         Write-Log "Retrieving the latest download link from $DownloadsPageURL"
         
         $htmlContent = Invoke-WebRequest -Uri $DownloadsPageURL -UseBasicParsing
-        # ClipGrab-.*.exe
         $installerLink = ($htmlContent.Links | Where-Object { $_.href -match "ClipGrab-.*\.exe$" }).href | Select-Object -First 1
 
         if (-not $installerLink) {
@@ -59,4 +70,10 @@ function Install-Program {
         Write-Log "Cleaning up temporary files"
         Remove-Item $TempDir -Recurse -Force -ErrorAction SilentlyContinue
     }
+}
+
+if (-not (IsInstalled)) {
+    Install-Program
+} else {
+    Write-Log "$ProgramName is already installed." "INFO"
 }

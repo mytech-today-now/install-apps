@@ -2,10 +2,22 @@
 
 $ProgramName = "FileMail Desktop"
 $ProgramExecutablePath = "C:\Program Files\Filemail Desktop\Filemail.exe"
-
 $DownloadsPageURL = "https://www.filemail.com/apps/windows-file-transfer-app-for-pc"
 $TempDir = "$env:TEMP\FileMailDesktopInstaller"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
+
+function Write-Log {
+    param (
+        [string]$Message,
+        [ValidateSet("INFO", "WARN", "ERROR")] [string]$Level = "INFO"
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "$timestamp [$Level] $Message"
+    Write-Output $logEntry
+    Add-Content -Path $LogFilePath -Value $logEntry
+}
 
 function IsInstalled {
     return Test-Path $ProgramExecutablePath
@@ -18,7 +30,6 @@ function Install-Program {
         Write-Log "Retrieving the latest download link from $DownloadsPageURL"
         
         $htmlContent = Invoke-WebRequest -Uri $DownloadsPageURL -UseBasicParsing
-        # Looking for something like FilemailSetup.exe
         $installerLink = ($htmlContent.Links | Where-Object { $_.href -match "Filemail.*\.exe$" }).href | Select-Object -First 1
 
         if (-not $installerLink) {
@@ -60,4 +71,10 @@ function Install-Program {
         Write-Log "Cleaning up temporary files"
         Remove-Item $TempDir -Recurse -Force -ErrorAction SilentlyContinue
     }
+}
+
+if (-not (IsInstalled)) {
+    Install-Program
+} else {
+    Write-Log "$ProgramName is already installed." "INFO"
 }
