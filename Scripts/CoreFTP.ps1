@@ -4,7 +4,7 @@ $ProgramName = "Core FTP"
 $ProgramExecutablePath = "C:\Program Files\CoreFTP\coreftp.exe"
 $DownloadsPageURL = "https://www.coreftp.com/download.html"
 $TempDir = "$env:TEMP\CoreFTPInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

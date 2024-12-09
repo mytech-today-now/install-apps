@@ -4,7 +4,7 @@ $ProgramName = "HandBrake"
 $ProgramExecutablePath = "C:\Program Files\HandBrake\HandBrake.exe"
 $DownloadsPageURL = "https://handbrake.fr/downloads.php"
 $TempDir = "$env:TEMP\HandBrakeInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

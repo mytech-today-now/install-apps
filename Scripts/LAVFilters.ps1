@@ -4,7 +4,7 @@ $ProgramName = "LAV Filters"
 $ProgramExecutablePath = "C:\Program Files (x86)\LAV Filters\unins000.exe"
 $DownloadsPageURL = "https://github.com/Nevcairiel/LAVFilters/releases"
 $TempDir = "$env:TEMP\LAVFiltersInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

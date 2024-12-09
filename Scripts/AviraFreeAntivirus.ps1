@@ -4,7 +4,7 @@ $ProgramName = "Avira Free Antivirus"
 $ProgramExecutablePath = "C:\Program Files\Avira\Endpoint Protection SDK\endpointprotection.exe"
 $DownloadsPageURL = "https://www.avira.com/en/free-antivirus-windows"
 $TempDir = "$env:TEMP\AviraInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

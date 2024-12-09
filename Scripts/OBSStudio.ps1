@@ -4,7 +4,7 @@ $ProgramName = "OBS Studio"
 $ProgramExecutablePath = "C:\Program Files\obs-studio\bin\64bit\obs64.exe"
 $DownloadsPageURL = "https://obsproject.com/"
 $TempDir = "$env:TEMP\OBSStudioInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

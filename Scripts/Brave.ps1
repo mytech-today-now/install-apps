@@ -4,7 +4,7 @@ $ProgramName = "Brave Browser"
 $ProgramExecutablePath = "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
 $DownloadsPageURL = "https://brave.com/download/"
 $TempDir = "$env:TEMP\BraveInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

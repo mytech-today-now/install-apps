@@ -4,7 +4,7 @@ $ProgramName = "Docker Desktop"
 $ProgramExecutablePath = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 $DownloadsPageURL = "https://www.docker.com/products/docker-desktop/"
 $TempDir = "$env:TEMP\DockerDesktopInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

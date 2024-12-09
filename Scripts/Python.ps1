@@ -4,7 +4,7 @@ $ProgramName = "Python"
 $ProgramExecutablePath = "C:\Program Files\Python\python.exe"
 $DownloadsPageURL = "https://www.python.org/downloads/"
 $TempDir = "$env:TEMP\PythonInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

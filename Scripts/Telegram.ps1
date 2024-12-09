@@ -4,7 +4,7 @@ $ProgramName = "Telegram"
 $ProgramExecutablePath = "C:\Program Files\Telegram Desktop\Telegram.exe"
 $DownloadsPageURL = "https://desktop.telegram.org/"
 $TempDir = "$env:TEMP\TelegramInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

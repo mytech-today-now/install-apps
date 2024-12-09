@@ -4,7 +4,7 @@ $ProgramName = "Google Chrome"
 $ProgramExecutablePath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
 $DownloadsPageURL = "https://www.google.com/chrome/"
 $TempDir = "$env:TEMP\ChromeInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

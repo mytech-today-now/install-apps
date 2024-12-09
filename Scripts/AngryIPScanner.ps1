@@ -4,7 +4,7 @@ $ProgramName = "Angry IP Scanner"
 $ProgramExecutablePath = "C:\Program Files\Angry IP Scanner\ipscan.exe"
 $DownloadsPageURL = "https://angryip.org/download/#windows"
 $TempDir = "$env:TEMP\AngryIPScannerInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

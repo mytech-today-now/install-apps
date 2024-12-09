@@ -20,7 +20,7 @@ if (-not $ProgramExecutablePath) {
 
 $DownloadsPageURL = "https://www.blender.org/download/"
 $TempDir = "$env:TEMP\BlenderInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

@@ -4,7 +4,7 @@ $ProgramName = "darktable"
 $ProgramExecutablePath = "C:\Program Files\darktable\bin\darktable.exe"
 $DownloadsPageURL = "https://www.darktable.org/"
 $TempDir = "$env:TEMP\darktableInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

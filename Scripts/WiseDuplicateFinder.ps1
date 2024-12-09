@@ -4,7 +4,7 @@ $ProgramName = "Wise Duplicate Finder"
 $ProgramExecutablePath = "C:\Program Files (x86)\Wise\Wise Duplicate Finder\WiseDuplicateFinder.exe"
 $DownloadsPageURL = "https://www.wisecleaner.com/wise-duplicate-finder.html"
 $TempDir = "$env:TEMP\WiseDuplicateFinderInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

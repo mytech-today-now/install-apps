@@ -4,7 +4,7 @@ $ProgramName = "GIT"
 $ProgramExecutablePath = "C:\Program Files\Git\bin\git.exe"
 $DownloadsPageURL = "https://git-scm.com/downloads"
 $TempDir = "$env:TEMP\GitInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

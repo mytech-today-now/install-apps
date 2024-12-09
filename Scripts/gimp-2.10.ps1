@@ -4,7 +4,7 @@ $ProgramName = "GIMP-2_is1"
 $ProgramExecutablePath = "C:\Program Files\GIMP 2\bin\gimp-2.10.exe"
 $DownloadsPageURL = "https://www.gimp.org/downloads/"
 $TempDir = "$env:TEMP\GIMPInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

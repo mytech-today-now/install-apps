@@ -4,7 +4,7 @@ $ProgramName = "Instant Eyedropper"
 $ProgramExecutablePath = "C:\Program Files (x86)\InstantEyedropper\InstantEyedropper.exe"
 $DownloadsPageURL = "http://instant-eyedropper.com/"
 $TempDir = "$env:TEMP\InstantEyeDropperInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

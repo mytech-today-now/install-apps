@@ -4,7 +4,7 @@ $ProgramName = "Cursor"
 $ProgramExecutablePath = "C:\Program Files\Cursor\Cursor.exe"
 $DownloadsPageURL = "https://www.cursor.com/"
 $TempDir = "$env:TEMP\CursorInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

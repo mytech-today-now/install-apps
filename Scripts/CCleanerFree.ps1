@@ -4,7 +4,7 @@ $ProgramName = "CCleaner Free"
 $ProgramExecutablePath = "C:\Program Files\CCleaner\CCleaner.exe"
 $DownloadsPageURL = "https://www.ccleaner.com/ccleaner/download"
 $TempDir = "$env:TEMP\CCleanerInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

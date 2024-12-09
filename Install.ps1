@@ -1,4 +1,5 @@
-# MainScript.ps1
+# Install.ps1
+
 <#
 .SYNOPSIS
     Main installation framework script that installs programs based on available installation scripts.
@@ -73,7 +74,7 @@ function Is-ProgramInstalledViaRegistry {
 # Main Script Execution - Script Verification
 # ==============================
 
-Log-Message "Starting MainScript.ps1" "INFO"
+Log-Message "Starting Install.ps1" "INFO"
 
 # Check if the Program Information Folder exists
 if (-not (Test-Path -Path $ProgramInfoFolder)) {
@@ -86,18 +87,13 @@ $programScripts = Get-ChildItem -Path $ProgramInfoFolder -Filter "*.ps1" -File
 
 if ($programScripts.Count -eq 0) {
     Log-Message "No program information scripts found in folder: $ProgramInfoFolder" "WARN"
-    exit 0
+    exit 1
 }
 
+# Initialize program data array
 $programData = @()
 
 foreach ($script in $programScripts) {
-    Log-Message "Processing script: $($script.Name)" "INFO"
-
-    # Initialize variables to prevent carry-over from previous iterations
-    $ProgramName = $null
-    $ProgramExecutablePath = $null
-
     # Dot-source the script
     try {
         . $script.FullName
@@ -171,9 +167,8 @@ function OnActionButtonClick {
             [System.Windows.MessageBox]::Show("Executable for $($item.Name) not found.", "Error", "OK", "Error")
         }
     } else {
-        # Toggle selection for installation
-        $item.IsSelected = -not $item.IsSelected
-        $item.Status = if ($item.IsSelected) { "Selected" } else { "Not Installed" }
+        # Change status to "Pending Install..."
+        $item.Status = "Pending Install..."
         $programList.Items.Refresh()
     }
 }
@@ -181,10 +176,10 @@ function OnActionButtonClick {
 function OnNextClick {
     $nextButton.IsEnabled = $false
 
-    $selectedPrograms = $programData | Where-Object { $_.IsSelected -and -not $_.IsInstalled }
+    $selectedPrograms = $programData | Where-Object { $_.Status -eq "Pending Install..." }
     $total = $selectedPrograms.Count
     if ($total -eq 0) {
-        Log-Message "No programs selected for installation or all are already installed." "INFO"
+        Log-Message "No programs selected for installation." "INFO"
         # Indicate completion
         $progressBar.Value = 100
         $window.Background = 'Green'
@@ -318,4 +313,4 @@ $programList.AddHandler([System.Windows.Controls.Primitives.ButtonBase]::ClickEv
 Log-Message "Displaying the GUI" "INFO"
 $null = $window.ShowDialog()
 
-Log-Message "MainScript.ps1 completed" "INFO"
+Log-Message "Install.ps1 completed" "INFO"

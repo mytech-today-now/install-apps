@@ -4,7 +4,7 @@ $ProgramName = "Microsoft Power BI Desktop"
 $ProgramExecutablePath = "C:\Users\kyle_\AppData\Local\Microsoft\WindowsApps\Microsoft.MicrosoftPowerBIDesktop_8wekyb3d8bbwe\PBIDesktopStore.exe"
 $DownloadsPageURL = "https://www.microsoft.com/en-us/download/details.aspx?id=58494"
 $TempDir = "$env:TEMP\PowerBIInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

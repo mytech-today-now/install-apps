@@ -4,7 +4,7 @@ $ProgramName = "Rename-It!"
 $ProgramExecutablePath = "C:\Program Files\Rename-It!\renameit.exe"
 $DownloadsPageURL = "https://sourceforge.net/projects/renameit/files/latest/download"
 $TempDir = "$env:TEMP\RenameItInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

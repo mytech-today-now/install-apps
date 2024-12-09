@@ -4,7 +4,7 @@ $ProgramName = "Tweaking.com Windows Repair"
 $ProgramExecutablePath = "C:\Program Files (x86)\Tweaking.com\Simple System Tweaker\Simple_System_Tweaker.exe"
 $DownloadsPageURL = "https://www.tweaking.com/"
 $TempDir = "$env:TEMP\TweakingComInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

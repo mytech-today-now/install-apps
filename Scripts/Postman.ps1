@@ -4,7 +4,7 @@ $ProgramName = "Postman"
 $ProgramExecutablePath = "C:\Program Files\Postman\Postman.exe"
 $DownloadsPageURL = "https://www.postman.com/downloads/"
 $TempDir = "$env:TEMP\PostmanInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

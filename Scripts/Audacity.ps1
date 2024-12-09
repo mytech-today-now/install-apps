@@ -4,7 +4,7 @@ $ProgramName = "Audacity"
 $ProgramExecutablePath = "C:\Program Files\Audacity\audacity.exe"
 $DownloadsPageURL = "https://www.audacityteam.org/download/"
 $TempDir = "$env:TEMP\AudacityInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

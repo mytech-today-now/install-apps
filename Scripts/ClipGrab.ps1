@@ -4,7 +4,7 @@ $ProgramName = "ClipGrab"
 $ProgramExecutablePath = "C:\Program Files\ClipGrab\ClipGrab.exe"
 $DownloadsPageURL = "https://clipgrab.org/"
 $TempDir = "$env:TEMP\ClipGrabInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

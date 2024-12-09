@@ -4,7 +4,7 @@ $ProgramName = "Node.js"
 $ProgramExecutablePath = "C:\Program Files\nodejs\node.exe"
 $DownloadsPageURL = "https://nodejs.org/en/download/package-manager"
 $TempDir = "$env:TEMP\NodeJSInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

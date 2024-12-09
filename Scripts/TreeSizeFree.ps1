@@ -4,7 +4,7 @@ $ProgramName = "TreeSize Free"
 $ProgramExecutablePath = "C:\Program Files\JAM Software\TreeSize Free\TreeSizeFree.exe"
 $DownloadsPageURL = "https://www.majorgeeks.com/files/details/treesize_free.html"
 $TempDir = "$env:TEMP\TreeSizeFreeInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

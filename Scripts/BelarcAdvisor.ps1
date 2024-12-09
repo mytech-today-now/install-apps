@@ -4,7 +4,7 @@ $ProgramName = "Belarc Advisor"
 $ProgramExecutablePath = "C:\Program Files (x86)\Belarc\BelarcAdvisor\BelarcAdvisor.exe"
 $DownloadsPageURL = "https://www.majorgeeks.com/files/details/belarc_advisor.html"
 $TempDir = "$env:TEMP\BelarcAdvisorInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

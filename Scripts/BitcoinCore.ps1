@@ -4,7 +4,7 @@ $ProgramName = "Bitcoin Core"
 $ProgramExecutablePath = "C:\Program Files\Bitcoin\bitcoin-qt.exe"
 $DownloadsPageURL = "https://bitcoin.org/en/download"
 $TempDir = "$env:TEMP\BitcoinCoreInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

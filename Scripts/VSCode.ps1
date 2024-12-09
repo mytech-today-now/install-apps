@@ -4,7 +4,7 @@ $ProgramName = "Visual Studio Code"
 $ProgramExecutablePath = "C:\Program Files\Microsoft VS Code\Code.exe"
 $DownloadsPageURL = "https://code.visualstudio.com/download"
 $TempDir = "$env:TEMP\VSCodeInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 

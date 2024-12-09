@@ -4,7 +4,7 @@ $ProgramName = "Wireshark"
 $ProgramExecutablePath = "C:\Program Files\Wireshark\Wireshark.exe"
 $DownloadsPageURL = "https://www.wireshark.org/download.html"
 $TempDir = "$env:TEMP\WiresharkInstaller"
-$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\install-apps") -ChildPath "installation.log"
+$LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
 
