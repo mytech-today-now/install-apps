@@ -41,7 +41,7 @@ MainScript.ps1 is a PowerShell script that serves as a main installation framewo
    Open PowerShell as an administrator and run:
 
    ```powershell
-   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
    ```
 
 2. **Run MainScript.ps1**
