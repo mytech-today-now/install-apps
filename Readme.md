@@ -2,6 +2,8 @@
 
 MainScript.ps1 is a PowerShell script that serves as a main installation framework. It reads all installation scripts from the `Scripts` subfolder, determines which programs are installed on the host system, presents a GUI for user selection, and installs the selected programs sequentially while tracking progress.
 
+A [ChatGPT Discussion](https://chatgpt.com/share/6757360a-5a48-8013-bdb6-b3c5762182d5) was used to create these scripts.
+
 ## Features
 
 - **Automatic Detection**: Identifies which programs are already installed.
@@ -23,6 +25,9 @@ MainScript.ps1 is a PowerShell script that serves as a main installation framewo
    ```shell
    git clone https://github.com/yourusername/installation-framework.git
    ```
+
+   or [download](https://github.com/mytech-today-now/install-apps/archive/refs/heads/main.zip) the zip file and extract it.
+   
 
 2. **Navigate to the Repository Directory**
 
@@ -47,7 +52,7 @@ MainScript.ps1 is a PowerShell script that serves as a main installation framewo
 2. **Run MainScript.ps1**
 
    ```powershell
-   .\MainScript.ps1
+   .\Install.ps1
    ```
 
 3. **Use the GUI**

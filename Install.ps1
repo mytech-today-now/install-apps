@@ -113,46 +113,84 @@ foreach ($script in $programScripts) {
         continue
     }
 
-    Log-Message "Checking installation status for '$ProgramName'..." "INFO"
+    # Determine installation status
+    $isInstalled = Test-Path -Path $ProgramExecutablePath -or (Is-ProgramInstalledViaRegistry -ProgramName $ProgramName)
 
-    # Determine if the program is installed by checking executable and registry
-    $isInstalled = (Test-Path -Path $ProgramExecutablePath) -or (Is-ProgramInstalledViaRegistry -ProgramName $ProgramName)
-
-    if ($isInstalled) {
-        Log-Message "$ProgramName is installed." "INFO"
-    } else {
-        Log-Message "$ProgramName is NOT installed." "WARN"
-    }
-
-    $programItem = [PSCustomObject]@{
-        Name                  = $ProgramName
-        ScriptPath            = $script.FullName
-        Status                = if ($isInstalled) { "Installed" } else { "Not Installed" }
-        IsInstalled           = $isInstalled
-        IsSelected            = -not $isInstalled  # Auto-select if not installed
-        ActionButtonContent   = if ($isInstalled) { "Run" } else { "Install" }
+    # Add program data to the array
+    $programData += [PSCustomObject]@{
+        Name = $ProgramName
+        Status = if ($isInstalled) { "Installed" } else { "Not Installed" }
+        ActionButtonContent = if ($isInstalled) { "Run" } else { "Install" }
+        IsInstalled = $isInstalled
+        ScriptPath = $script.FullName
         ProgramExecutablePath = $ProgramExecutablePath
     }
-
-    $programData += $programItem
-
-    Log-Message "----------------------------------------" "INFO"
 }
-
-Log-Message "Program installation verification completed." "INFO"
 
 # ==============================
 # GUI Setup
 # ==============================
 
-if (-not (Get-Command -Name Add-Type -ErrorAction SilentlyContinue)) {
-    Log-Message "Add-Type not available. Running in a restricted environment?" "ERROR"
+Add-Type -AssemblyName PresentationFramework, PresentationCore
+
+# XAML definition without Click attributes
+$xaml = @"
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="myTech.Today Installer" Height="500" Width="700" WindowStartupLocation="CenterScreen"
+        Background="#245261" Foreground="White" FontFamily="Segoe UI" Icon="$IconPath">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Select Programs to Install:" FontSize="16" Margin="0,0,0,10"/>
+        <ListView x:Name="ProgramList" Grid.Row="1" SelectionMode="Extended" Background="#181818" Foreground="#dddddd" FontFamily="Segoe UI" >
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Program" DisplayMemberBinding="{Binding Name}" Width="300"/>
+                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="100"/>
+                    <GridViewColumn Header="Action" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding ActionButtonContent}" Width="80"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ProgressBar x:Name="ProgressBar" Grid.Row="2" Height="20" Margin="0,10,0,0" Minimum="0" Maximum="100"/>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button x:Name="CancelButton" Content="Cancel" Width="80"/>
+            <Button x:Name="NextButton" Content="Next" Width="80" Margin="10,0,0,0"/>
+        </StackPanel>
+    </Grid>
+</Window>
+"@
+
+$reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$xaml)
+try {
+    $window = [Windows.Markup.XamlReader]::Load($reader)
+} catch {
+    Log-Message "Error loading XAML: $_" "ERROR"
     exit 1
 }
 
-Add-Type -AssemblyName PresentationFramework, PresentationCore
+# Find controls
+$programList = $window.FindName("ProgramList")
+$progressBar = $window.FindName("ProgressBar")
+$nextButton = $window.FindName("NextButton")
+$cancelButton = $window.FindName("CancelButton")
 
-# Ensure that event handler functions are defined before loading XAML
+$programList.ItemsSource = $programData
+
+# ==============================
+# Event Handlers
+# ==============================
+
 function OnActionButtonClick {
     param($sender, $e)
     $item = $sender.DataContext
@@ -235,66 +273,6 @@ function OnCancelClick {
     Log-Message "Installation cancelled by user." "WARN"
     $window.Close()
 }
-
-Add-Type -AssemblyName PresentationFramework, PresentationCore
-
-# XAML definition without Click attributes
-$xaml = @"
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="myTech.Today Installer" Height="500" Width="700" WindowStartupLocation="CenterScreen"
-        Background="#245261" Foreground="White" FontFamily="Segoe UI" Icon="$IconPath">
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <TextBlock Text="Select Programs to Install:" FontSize="16" Margin="0,0,0,10"/>
-        <ListView x:Name="ProgramList" Grid.Row="1" SelectionMode="Extended" Background="#181818" Foreground="#dddddd" FontFamily="Segoe UI" >
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Program" DisplayMemberBinding="{Binding Name}" Width="300"/>
-                    <GridViewColumn Header="Status" DisplayMemberBinding="{Binding Status}" Width="100"/>
-                    <GridViewColumn Header="Action" Width="100">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="{Binding ActionButtonContent}" Width="80"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <ProgressBar x:Name="ProgressBar" Grid.Row="2" Height="20" Margin="0,10,0,0" Minimum="0" Maximum="100"/>
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button x:Name="CancelButton" Content="Cancel" Width="80"/>
-            <Button x:Name="NextButton" Content="Next" Width="80" Margin="10,0,0,0"/>
-        </StackPanel>
-    </Grid>
-</Window>
-"@
-
-$reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]$xaml)
-try {
-    $window = [Windows.Markup.XamlReader]::Load($reader)
-} catch {
-    Log-Message "Error loading XAML: $_" "ERROR"
-    exit 1
-}
-
-# Find controls
-$programList = $window.FindName("ProgramList")
-$progressBar = $window.FindName("ProgressBar")
-$nextButton = $window.FindName("NextButton")
-$cancelButton = $window.FindName("CancelButton")
-
-$programList.ItemsSource = $programData
-
-# ==============================
-# Event Handlers
-# ==============================
 
 # Add event handlers to the controls
 $nextButton.Add_Click({ OnNextClick })
