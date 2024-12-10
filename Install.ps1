@@ -71,7 +71,7 @@ function Is-ProgramInstalledViaRegistry {
 }
 
 # ==============================
-# Main Script Execution - Script Verification
+# Main Script Execution
 # ==============================
 
 Log-Message "Starting Install.ps1" "INFO"
