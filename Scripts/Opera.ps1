@@ -2,7 +2,7 @@
 
 $ProgramName = "Opera"
 $ProgramExecutablePath = "C:\Program Files\Opera\opera.exe"
-$DownloadsPageURL = "https://www.opera.com/download"
+$DownloadsPageURL = "https://www.opera.com/computer/thanks?ni=stable&os=windows"
 $TempDir = "$env:TEMP\OperaInstaller"
 $LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 

@@ -2,7 +2,7 @@
 
 $ProgramName = "LibreCAD"
 $ProgramExecutablePath = "C:\Program Files\LibreCAD\LibreCAD.exe"
-$DownloadsPageURL = "https://librecad.org/#download"
+$DownloadsPageURL = "https://sourceforge.net/projects/librecad/files/Windows/"
 $TempDir = "$env:TEMP\LibreCADInstaller"
 $LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 

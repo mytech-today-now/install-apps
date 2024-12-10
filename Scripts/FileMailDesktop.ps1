@@ -2,7 +2,7 @@
 
 $ProgramName = "FileMail Desktop"
 $ProgramExecutablePath = "C:\Program Files\Filemail Desktop\Filemail.exe"
-$DownloadsPageURL = "https://www.filemail.com/apps/windows-file-transfer-app-for-pc"
+$DownloadsPageURL = "https://www.filemail.com/apps/windows-desktop"
 $TempDir = "$env:TEMP\FileMailDesktopInstaller"
 $LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 

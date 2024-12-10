@@ -2,7 +2,7 @@
 
 $ProgramName = "Cursor"
 $ProgramExecutablePath = "C:\Program Files\Cursor\Cursor.exe"
-$DownloadsPageURL = "https://www.cursor.com/"
+$DownloadsPageURL = "https://www.cursor.com/downloads"
 $TempDir = "$env:TEMP\CursorInstaller"
 $LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 

@@ -2,7 +2,7 @@
 
 $ProgramName = "Postman"
 $ProgramExecutablePath = "C:\Program Files\Postman\Postman.exe"
-$DownloadsPageURL = "https://www.postman.com/downloads/"
+$DownloadsPageURL = "https://dl.pstmn.io/download/latest/win64"
 $TempDir = "$env:TEMP\PostmanInstaller"
 $LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
