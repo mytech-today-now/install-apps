@@ -114,7 +114,7 @@ foreach ($script in $programScripts) {
     }
 
     # Determine installation status
-    $isInstalled = Test-Path -Path $ProgramExecutablePath -or (Is-ProgramInstalledViaRegistry -ProgramName $ProgramName)
+$isInstalled = (Test-Path -Path $ProgramExecutablePath) -or (Is-ProgramInstalledViaRegistry -ProgramName $ProgramName)
 
     # Add program data to the array
     $programData += [PSCustomObject]@{
