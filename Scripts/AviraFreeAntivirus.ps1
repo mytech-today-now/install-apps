@@ -1,5 +1,8 @@
 # AviraFreeAntivirus.ps1
 
+# Import common functions
+. "$PSScriptRoot\..\Common.ps1"
+
 $ProgramName = "Avira Free Antivirus"
 $ProgramExecutablePath = "C:\Program Files\Avira\Endpoint Protection SDK\endpointprotection.exe"
 $DownloadsPageURL = "https://www.avira.com/en/free-antivirus-windows"
@@ -7,17 +10,6 @@ $TempDir = "$env:TEMP\AviraInstaller"
 $LogFilePath = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath "..\") -ChildPath "installation.log"
 
 New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
-
-function Write-Log {
-    param (
-        [string]$Message,
-        [ValidateSet("INFO", "WARN", "ERROR")] [string]$Level = "INFO"
-    )
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $logEntry = "$timestamp [$Level] $Message"
-    Write-Output $logEntry
-    Add-Content -Path $LogFilePath -Value $logEntry
-}
 
 function IsInstalled {
     return Test-Path $ProgramExecutablePath

@@ -1,75 +1,3 @@
-# Install.ps1
-
-<#
-.SYNOPSIS
-    Main installation framework script that installs programs based on available installation scripts.
-
-.DESCRIPTION
-    This script reads all installation scripts from the 'Scripts' subfolder, dot-sources them to extract
-    $ProgramName and $ProgramExecutablePath, determines which programs are installed by checking the host system,
-    presents a GUI for user selection, and installs the selected programs sequentially while tracking progress.
-
-.NOTES
-    Author: @mytech-today-now
-    Date:   2024-12-06
-#>
-
-# ==============================
-# Configuration
-# ==============================
-
-# Set the path to the program information folder (scripts directory)
-$ProgramInfoFolder = Join-Path -Path $PSScriptRoot -ChildPath "Scripts"
-
-# Set the path to the log file
-$LogFilePath = Join-Path -Path $PSScriptRoot -ChildPath "installation.log"
-
-# Set the path to the icon file
-$IconPath = Join-Path -Path $PSScriptRoot -ChildPath "icon.ico"
-
-# ==============================
-# Functions
-# ==============================
-
-function Log-Message {
-    param (
-        [string]$Message,
-        [ValidateSet("INFO", "WARN", "ERROR")] [string]$Level = "INFO"
-    )
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $logEntry = "$timestamp [$Level] $Message"
-    Write-Output $logEntry
-    if ($LogFilePath) {
-        Add-Content -Path $LogFilePath -Value $logEntry
-    }
-}
-
-function Is-ProgramInstalledViaRegistry {
-    param (
-        [string]$ProgramName
-    )
-
-    $registryPaths = @(
-        "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
-        "HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
-        "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*"
-    )
-
-    foreach ($path in $registryPaths) {
-        try {
-            $keys = Get-ItemProperty -Path $path -ErrorAction SilentlyContinue | Where-Object {
-                $_.DisplayName -like "*$ProgramName*"
-            }
-            if ($keys) {
-                return $true
-            }
-        } catch {
-            Log-Message "Failed to access registry path: $path. Error: $_" "WARN"
-        }
-    }
-    return $false
-}
-
 # ==============================
 # Main Script Execution
 # ==============================
@@ -94,36 +22,40 @@ if ($programScripts.Count -eq 0) {
 $programData = @()
 
 foreach ($script in $programScripts) {
-    # Dot-source the script
     try {
-        . $script.FullName
+        # Read the script content
+        $scriptContent = Get-Content -Path $script.FullName -Raw
+
+        # Extract $ProgramName and $ProgramExecutablePath using regex
+        if ($scriptContent -match '\$ProgramName\s*=\s*"([^"]+)"') {
+            $ProgramName = $matches[1]
+        } else {
+            Log-Message "`$ProgramName is not defined in script: $($script.Name)" "ERROR"
+            continue
+        }
+
+        if ($scriptContent -match '\$ProgramExecutablePath\s*=\s*"([^"]+)"') {
+            $ProgramExecutablePath = $matches[1]
+        } else {
+            Log-Message "`$ProgramExecutablePath is not defined in script: $($script.Name)" "ERROR"
+            continue
+        }
+
+        # Determine installation status
+        $isInstalled = (Test-Path -Path $ProgramExecutablePath) -or (Is-ProgramInstalledViaRegistry -ProgramName $ProgramName)
+
+        # Add program data to the array
+        $programData += [PSCustomObject]@{
+            Name = $ProgramName
+            Status = if ($isInstalled) { "Installed" } else { "Not Installed" }
+            ActionButtonContent = if ($isInstalled) { "Run" } else { "Install" }
+            IsInstalled = $isInstalled
+            ScriptPath = $script.FullName
+            ProgramExecutablePath = $ProgramExecutablePath
+        }
     } catch {
-        Log-Message "Failed to dot-source script: $($script.FullName). Error: $_" "ERROR"
+        Log-Message "Failed to process script: $($script.FullName). Error: $_" "ERROR"
         continue
-    }
-
-    # Validate that required variables are defined
-    if (-not $ProgramName) {
-        Log-Message "`$ProgramName is not defined in script: $($script.Name)" "ERROR"
-        continue
-    }
-
-    if (-not $ProgramExecutablePath) {
-        Log-Message "`$ProgramExecutablePath is not defined in script: $($script.Name)" "ERROR"
-        continue
-    }
-
-    # Determine installation status
-$isInstalled = (Test-Path -Path $ProgramExecutablePath) -or (Is-ProgramInstalledViaRegistry -ProgramName $ProgramName)
-
-    # Add program data to the array
-    $programData += [PSCustomObject]@{
-        Name = $ProgramName
-        Status = if ($isInstalled) { "Installed" } else { "Not Installed" }
-        ActionButtonContent = if ($isInstalled) { "Run" } else { "Install" }
-        IsInstalled = $isInstalled
-        ScriptPath = $script.FullName
-        ProgramExecutablePath = $ProgramExecutablePath
     }
 }
 
