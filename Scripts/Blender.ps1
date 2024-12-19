@@ -16,20 +16,8 @@ foreach ($Dir in $SubDirs) {
     }
 }
 
-if (-not $ProgramExecutablePath) {
-    Write-Log "No Blender executable found in $BasePath" "ERROR"
-} else {
-    Write-Log "Blender executable found at: $ProgramExecutablePath" "INFO"
-}
-
 $DownloadsPageURL = "https://www.blender.org/download/"
 $TempDir = "$env:TEMP\BlenderInstaller"
 $InstallerPattern = "blender-.*-windows64\.msi$"
 
-New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
-
-if (-not (Test-Path $ProgramExecutablePath)) {
-    Install-Program -ProgramName $ProgramName -ProgramExecutablePath $ProgramExecutablePath -DownloadsPageURL $DownloadsPageURL -TempDir $TempDir -InstallerPattern $InstallerPattern
-} else {
-    Write-Log "$ProgramName is already installed." "INFO"
-}
+Install-Program -ProgramName $ProgramName -ProgramExecutablePath $ProgramExecutablePath -DownloadsPageURL $DownloadsPageURL -TempDir $TempDir -InstallerPattern $InstallerPattern

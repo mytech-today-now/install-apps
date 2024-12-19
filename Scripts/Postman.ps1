@@ -9,10 +9,4 @@ $DownloadsPageURL = "https://dl.pstmn.io/download/latest/win64"
 $TempDir = "$env:TEMP\PostmanInstaller"
 $InstallerPattern = "Postman-win64-setup\.exe$"
 
-New-Item -ItemType Directory -Path $TempDir -Force | Out-Null
-
-if (-not (Test-Path $ProgramExecutablePath)) {
-    Install-Program -ProgramName $ProgramName -ProgramExecutablePath $ProgramExecutablePath -DownloadsPageURL $DownloadsPageURL -TempDir $TempDir -InstallerPattern $InstallerPattern
-} else {
-    Write-Log "$ProgramName is already installed." "INFO"
-}
+Install-Program -ProgramName $ProgramName -ProgramExecutablePath $ProgramExecutablePath -DownloadsPageURL $DownloadsPageURL -TempDir $TempDir -InstallerPattern $InstallerPattern
